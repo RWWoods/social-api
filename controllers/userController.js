@@ -1,30 +1,42 @@
 const { ObjectId } = require('mongoose').Types;
-const {User, Thought} = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
 
   async getUsers(req, res) {
     try {
-        const response = await User.find({})
-        res.status(200).json(response)
+      const response = await User.find({})
+      res.status(200).json(response)
     } catch (err) {
-        res.status(500).json({ message: err })
+      res.status(500).json({ message: err })
     }
-},
-  getSingleUser(req, res) {
-    User.findOne({ _id: req.params.userId })
-      .select('-__v')
-      .then((user) =>
-        !user
-          ? res.status(404).json({ message: 'No user with that ID' })
-          : res.json(user)
-      )
-      .catch((err) => res.status(500).json(err));
   },
-  createUser(req, res) {
-    User.create(req.body)
-      .then((dbUserData) => res.json(dbUserData))
-      .catch((err) => res.status(500).json(err));
+  async getSingleUser(req, res) {
+    try {
+      const response = await User.findOne({ _id: req.params.userId })
+        .select('-__v')
+        .populate("thoughts")
+        .populate("friends")
+
+      if (!response) {
+        res.status(404).json({ message: "No user found with that Id" })
+      } else {
+        res.json(response)
+      }
+
+    } catch (err) {
+      res.status(500).json({ message: err });
+    }
+  },
+
+  async createUser(req, res) {
+    try {
+      const response = await User.create(req.body)
+      res.json(response)
+    }
+    catch (err) {
+      res.status(500).json({ message: err });
+    }
   },
 
   // update single user
