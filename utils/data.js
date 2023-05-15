@@ -36,13 +36,27 @@ const thoughtDescriptions = [
 const emails = [
   'test@test.com',
   'notascam@scam.com',
-  ''
+  'billybob@goat.com',
+  'sillygoose@sillygooseproductions.com',
+  'reallybigfan@notarealfan.com',
+  'iliketurtles@oldinternet.com',
+  'charliebitme@rememeberthat.com',
+  'charlietheunicorn@candymountain.com',
+  'beeeeeeeeeees@oprah.com',
+  'dontforgettogitcommit@reminders.com',
+  'ihopeyouhaveaniceday@sunshine.com',
+  'sandersonfan@cosmere.com',
+  'intentionallyblank@empty.com',
+  'lastemailhopefully@imtired.com'
 ]
 // Get a random item given an array
 const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 const getRandomUsername = () =>
   `${getRandomArrItem(usernames)}`;
+
+const getRandomEmail = () =>
+  `${getRandomArrItem(emails)}`;
 
 const getRandomThoughts = (int) => {
   const results = [];
@@ -56,4 +70,4 @@ const getRandomThoughts = (int) => {
 };
 
 // Export the functions for use in seed.js
-module.exports = { getRandomUsername, getRandomThoughts };
+module.exports = { getRandomUsername, getRandomThoughts, getRandomEmail };

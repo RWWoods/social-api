@@ -1,6 +1,6 @@
 const connection = require('../config/connection');
 const { Thought, User } = require('../models');
-const { getRandomUsername, getRandomThoughts } = require('./data');
+const { getRandomUsername, getRandomThoughts, getRandomEmail } = require('./data');
 
 connection.on('error', (err) => err);
 
@@ -8,7 +8,7 @@ connection.once('open', async () => {
   console.log('connected');
 
   // Drop existing Thoughts
-  await Thought.deleteMany({});
+  // await Thought.deleteMany({});
 
   // Drop existing Users
   await User.deleteMany({});
@@ -16,11 +16,12 @@ connection.once('open', async () => {
   // Create empty array to hold the Users
   const Users = [];
 
-  // Loop 20 times -- add Users to the Users array
+  // Loop 12 times -- add Users to the Users array
   for (let i = 0; i < 12; i++) {
-    const thoughts = getRandomThoughts(10);
-    const email = getRandomEmail(10)
+    const thoughts = getRandomThoughts(4);
+    const email = getRandomEmail();
     const userName = getRandomUsername();
+    const friends = getRandomUsername(3);
 
     Users.push({
       userName,
@@ -29,16 +30,25 @@ connection.once('open', async () => {
       thoughts,
     });
   }
+  const Thoughts = [];
 
+  // Loop 12 times -- add Users to the Users array
+  for (let i = 0; i < 12; i++) {
+    const thoughtText = getRandomThoughts();
+    const email = getRandomEmail();
+    const username = getRandomUsername();
+
+
+    Thoughts.push({
+      thoughtText,
+      email,
+      username,
+    });
+  }
   // Add Users to the collection and await the results
   await User.collection.insertMany(Users);
 
-  // Add Thoughts to the collection and await the results
-  await Thought.collection.insertOne({
-    ThoughtName: 'UCLA',
-    inPerson: false,
-    Users: [...Users],
-  });
+  await Thought.collection.insertMany(Thoughts);
 
   // Log out the seed data to indicate what should appear in the database
   console.table(Users);
