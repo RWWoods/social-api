@@ -1,27 +1,26 @@
-const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
 module.exports = {
 
   async getUsers(req, res) {
     try {
-      const response = await User.find({})
-      res.status(200).json(response)
+      const allUsers = await User.find({})
+      res.status(200).json(allUsers)
     } catch (err) {
       res.status(500).json({ message: err })
     }
   },
   async getSingleUser(req, res) {
     try {
-      const response = await User.findOne({ _id: req.params.userId })
+      const singleUser = await User.findOne({ _id: req.params.userId })
         .select('-__v')
         .populate("thoughts")
         .populate("friends")
 
-      if (!response) {
+      if (!singleUser) {
         res.status(404).json({ message: "No user found with that Id" })
       } else {
-        res.json(response)
+        res.json(singleUser)
       }
 
     } catch (err) {
