@@ -2,46 +2,43 @@ const { User, Thought } = require('../models');
 
 module.exports = {
 
-  async getUsers(req, res) {
-    try {
-      const allUsers = await User.find({})
-      res.status(200).json(allUsers)
-    } catch (err) {
-      res.status(500).json({ message: err })
-    }
+  getUsers(req, res) {
+    User.find()
+      .then((users) => res.json(users))
+      .catch((err) => res.status(500).json(err));
   },
-  async getSingleUser(req, res) {
-    try {
-      const singleUser = await User.findOne({ _id: req.params.userId })
-        .select('-__v')
-        .populate("thoughts")
-        .populate("friends")
-
-      if (!singleUser) {
-        res.status(404).json({ message: "No user found with that Id" })
-      } else {
-        res.json(singleUser)
-      }
-
-    } catch (err) {
-      res.status(500).json({ message: err });
-    }
+  getSingleUser(req, res) {
+    User.findOne({ _id: req.params.userId })
+      .select('-__v')
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user with that ID' })
+          : res.json(user)
+      )
+      .catch((err) => res.status(500).json(err));
   },
 
-  async createUser(req, res) {
-    try {
-      const response = await User.create(req.body)
-      res.json(response)
-    }
-    catch (err) {
-      res.status(500).json({ message: err });
-    }
+  // create a new user
+  createUser(req, res) {
+    User.create(req.body)
+      .then((dbUserData) => res.json(dbUserData))
+      .catch((err) => res.status(500).json(err));
   },
 
   // update single user
 
   // delete single user
-
+  deleteUser(req, res) {
+    User.findOneAndDelete({ _id: req.params.userId })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user with that ID' })
+          : Thought.deleteMany({ _id: { $in: user.thoughts } })
+      )
+      .then(() => res.json({ message: 'User and associated thoughts are deleted!' }))
+      .catch((err) => res.status(500).json(err));
+  },
+};
   //post / delete friend
 
-}
+
