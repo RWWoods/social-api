@@ -1,4 +1,4 @@
-// get all, get single by id, post new thought, update thought, delete
+
 
 const { Thought, User } = require('../models');
 
@@ -23,7 +23,7 @@ module.exports = {
             .then((thought) => {
                 return User.findOneAndUpdate(
                     { _id: req.body.userId },
-                    { $addToSet: { thoughts: thought._id } },
+                    { $push: { thoughts: thought._id } },
                     { new: true }
                 );
             })
@@ -93,7 +93,7 @@ module.exports = {
     deleteReaction(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
-            { $pull: { reactions: { reactionId: req.body.reactionId } } },
+            { $pull: { reactions: req.body } },
             { runValidators: true, new: true }
         )
             .then((thought) =>
